@@ -460,7 +460,14 @@ fn main() {
         Ok(p) => p,
         Err(e) => {
             eprintln!("{e}");
-            emit_error(Some(&inp), &e);
+            // Normalize to the clean reason enum (parse_pr may add
+            // field-path detail for logs; the contract sees the code).
+            let code = if e == "response_too_large" {
+                "response_too_large"
+            } else {
+                "bad_github_json"
+            };
+            emit_error(Some(&inp), code);
             return;
         }
     };

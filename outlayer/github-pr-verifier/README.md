@@ -11,7 +11,7 @@ validation; exact claim-line binding.
 ## 🔑 Verifier WASM hash (contract `verifier_wasm_hash` / OutLayer `version_key`)
 
 ```
-bfb159945d7db097b28cf6bba938aec9ae2b09ef205c557ffd9ffee5e33ea198
+b17ae0f6fa374e71b56fe196e2101f6a7528cf0b3a2987e6d440bcd8202801a7
 ```
 
 - Binary: `target/wasm32-wasip2/release/github-pr-verifier.wasm`
@@ -118,7 +118,7 @@ call `outlayer.testnet.request_execution` with an inline source — no
 "source": {
   "WasmUrl": {
     "url": "https://github.com/rjrajput-web3/patchpay/releases/download/verifier-v0.1.0/github-pr-verifier.wasm",
-    "hash": "bfb159945d7db097b28cf6bba938aec9ae2b09ef205c557ffd9ffee5e33ea198",
+    "hash": "b17ae0f6fa374e71b56fe196e2101f6a7528cf0b3a2987e6d440bcd8202801a7",
     "build_target": "wasm32-wasip2"
   }
 }
