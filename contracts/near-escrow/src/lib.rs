@@ -41,7 +41,7 @@ use near_sdk::{
 pub const UNSET_VERIFIER_HASH: &str = "UNSET_TRACK_B_PENDING";
 /// OutLayer project id the verifier is deployed under (Track B:
 /// `outlayer deploy patchpay-verifier <FastFS URL>`).
-pub const VERIFIER_PROJECT_ID: &str = "patchpay-verifier";
+pub const VERIFIER_PROJECT_ID: &str = "p2deployer.testnet/patchpay-verifier";
 /// Protocol storage price: 1e19 yoctoNEAR per byte.
 pub const STORAGE_PRICE_YOCTO_PER_BYTE: u128 = 10_000_000_000_000_000_000;
 
