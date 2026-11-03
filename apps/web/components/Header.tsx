@@ -16,13 +16,8 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-paper/90 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
-        <Link href="/" className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-ink font-display text-xl text-paper">
-            P
-          </span>
-          <span className="font-display text-xl tracking-tight text-ink">
-            PATCHPAY
-          </span>
+        <Link href="/" className="flex items-center gap-2.5" aria-label="PATCHPAY home">
+          <img src="/logo.svg" alt="PATCHPAY" className="h-9 w-auto" />
         </Link>
         <nav className="hidden items-center gap-7 md:flex" aria-label="Primary">
           {NAV.map((n) => (
@@ -63,7 +58,10 @@ export function Footer() {
     <footer className="border-t border-line bg-ink text-paper">
       <div className="mx-auto grid max-w-6xl gap-10 px-5 py-14 md:grid-cols-4">
         <div className="md:col-span-2">
-          <p className="font-display text-2xl">PATCHPAY</p>
+          <p className="flex items-center gap-3 font-display text-2xl">
+            <img src="/logo-icon.svg" alt="PATCHPAY logo" className="h-8 w-8" />
+            <span>PATCH<span className="text-accent">PAY</span></span>
+          </p>
           <p className="mt-2 max-w-sm text-sm leading-relaxed text-paper/60">
             Code ships. Payment follows. GitHub bounties held in NEAR escrow,
             released only when a TEE-verified merge proves the work landed.

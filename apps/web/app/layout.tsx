@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: "PATCHPAY — Code ships. Payment follows.",
   description:
     "GitHub bounties held in NEAR escrow. Payment releases only when a TEE-verified merge proves the work landed.",
+  icons: { icon: "/favicon.svg" },
 };
 
 export default function RootLayout({

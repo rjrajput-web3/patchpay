@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 232 64">
+  <rect x="2" y="2" width="60" height="60" rx="15" fill="#16130E"/>
+  <path d="M23 41 L32.5 50 L48 27" fill="none" stroke="#D9541E" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="23" cy="41" r="5.2" fill="#D9541E"/>
+  <text x="76" y="43" font-family="Georgia, 'Times New Roman', serif" font-size="30" font-weight="bold" letter-spacing="1"><tspan fill="#16130E">PATCH</tspan><tspan fill="#D9541E">PAY</tspan></text>
+</svg>
