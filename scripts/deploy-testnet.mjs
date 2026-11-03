@@ -109,6 +109,9 @@ async function main() {
   console.log("deploy tx:", deployRes.transaction.hash);
 
   // --- init (only if not initialized: probe get_config) ---
+  const REAL_VERIFIER_HASH = readFileSync(join(ROOT, "outlayer", "github-pr-verifier", "github-pr-verifier.wasm.sha256"), "utf8").split(/\s+/)[0];
+  console.log("Track B verifier WASM SHA256:", REAL_VERIFIER_HASH);
+
   const contract = new nearAPI.Contract(sub, SUBACCOUNT, {
     viewMethods: ["get_config", "get_owner", "get_bounty"],
     changeMethods: ["new", "set_verifier_wasm_hash", "set_outlayer_contract"],
@@ -125,7 +128,16 @@ async function main() {
     console.log("init tx:", initRes.transaction.hash);
   }
 
-  const cfg = await contract.get_config();
+  // pin the real Track B verifier hash (owner action)
+  let cfg = await contract.get_config();
+  if (cfg.verifier_wasm_hash !== REAL_VERIFIER_HASH) {
+    console.log(`setting verifier_wasm_hash to the Track B build...`);
+    const hashRes = await contract.set_verifier_wasm_hash({ wasm_hash: REAL_VERIFIER_HASH }, "300000000000000", "0");
+    console.log("set_verifier_wasm_hash tx:", hashRes.transaction.hash);
+    cfg = await contract.get_config();
+  } else {
+    console.log("verifier_wasm_hash already pinned to the Track B build");
+  }
   console.log("config:", JSON.stringify(cfg, null, 2));
   const state = await sub.state();
   console.log("code_hash:", state.code_hash);

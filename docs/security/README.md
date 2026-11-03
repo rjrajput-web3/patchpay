@@ -65,8 +65,10 @@ Implements ARCHITECTURE.md §9 (authoritative). Read the contract at
 - **Version assertion is best-effort** until the payload shape is confirmed: when
   the output carries `wasm_sha256`/`version_key` it is asserted against the pinned
   hash; otherwise we rely on OutLayer's hash-pinned execution.
-- `submit_pr` is unusable on-chain until the owner sets the real
-  `verifier_wasm_hash` (currently `UNSET_TRACK_B_PENDING`).
+- `verifier_wasm_hash` is pinned to the Track B build
+  (`bfb15994…e33ea198`, see `outlayer/github-pr-verifier/github-pr-verifier.wasm.sha256`)
+  at deploy; the contract default remains `UNSET_TRACK_B_PENDING` until the owner
+  sets it, so a fresh deploy never verifies against an unknown binary.
 - GitHub API rate limits from TEE egress IPs are mitigated by the token; without it
   the 60 req/hr shared-IP limit is a self-DoS risk.
 - Storage fee (default 0.02 NEAR) covers the measured worst-case bounty record;
