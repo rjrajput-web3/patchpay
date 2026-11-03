@@ -1,0 +1,36 @@
+# Secrets — NEVER commit
+.env
+.env.*
+*.key
+*.pem
+*.json.key
+*secret*
+!**/.env.example
+secrets/
+credentials/
+
+# Node
+node_modules/
+.next/
+dist/
+build/
+*.log
+
+# Rust
+target/
+**/*.rs.bk
+Cargo.lock.bak
+
+# Build outputs
+*.wasm
+!docs/**/*.wasm
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Test artifacts
+coverage/
+.nyc_output/
