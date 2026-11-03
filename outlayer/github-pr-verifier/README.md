@@ -108,6 +108,32 @@ Then: store the GitHub PAT as an OutLayer encrypted secret bound to the
 WASM hash (see SECRETS.md — Rohit's step), and set the escrow
 contract's `verifier_wasm_hash` to the hash above.
 
+### WasmUrl fallback (no CLI needed — LIVE)
+
+The `.wasm` is published as a GitHub release asset, so the contract can
+call `outlayer.testnet.request_execution` with an inline source — no
+`outlayer` CLI or project registration required:
+
+```json
+"source": {
+  "WasmUrl": {
+    "url": "https://github.com/rjrajput-web3/patchpay/releases/download/verifier-v0.1.0/github-pr-verifier.wasm",
+    "hash": "bfb159945d7db097b28cf6bba938aec9ae2b09ef205c557ffd9ffee5e33ea198",
+    "build_target": "wasm32-wasip2"
+  }
+}
+```
+
+The worker downloads the bytes, verifies the SHA256, and refuses any
+mismatch. (Asset URL verified 2026-11-03: downloads and hashes to the
+pinned value. Note the URL 302-redirects to objects.githubusercontent.com;
+the worker's downloader must follow redirects — testnet E2E will prove it.)
+Other `request_execution` args for Track A: `resource_limits`
+`{max_instructions: 1000000000, max_memory_mb: 128, max_execution_seconds: 60}`
+(or the tight variant), `input_data` = the stdin JSON string,
+`response_format: "Json"`, `secrets_ref` → the `GITHUB_TOKEN` profile
+bound to `WasmHash { hash: <above> }`.
+
 **Blocked on Rohit:** `outlayer login testnet` needs his testnet account
 key; the GitHub PAT is his step (SECRETS.md). Nothing here needs them
 until deploy.
