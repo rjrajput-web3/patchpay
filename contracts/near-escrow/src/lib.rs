@@ -221,15 +221,18 @@ pub struct Contract {
 /// OutLayer execution contract (testnet: outlayer.testnet).
 /// Params per the official NEAR integration docs; `source` pins the exact
 /// verifier build via `version_key` (the WASM SHA256, §9.8).
+/// Signature matches the deployed outlayer contract (7 params).
 #[near_sdk::ext_contract(ext_outlayer)]
 pub trait ExtOutLayer {
     fn request_execution(
         &mut self,
         source: near_sdk::serde_json::Value,
         resource_limits: near_sdk::serde_json::Value,
-        input_data: String,
-        response_format: String,
-        payer_account_id: Option<AccountId>,
+        input_data: near_sdk::serde_json::Value,
+        secrets_ref: near_sdk::serde_json::Value,
+        response_format: near_sdk::serde_json::Value,
+        payer_account_id: near_sdk::serde_json::Value,
+        params: near_sdk::serde_json::Value,
     );
 }
 
@@ -625,16 +628,24 @@ impl Contract {
         // NOTE: the promise is intentionally detached — near-sdk creates the
         // receipts in `Drop::drop`, so this is fire-and-forget by design; the
         // callback carries the result back into the contract.
+        // `request_execution` returns its yield promise via `promise_return`,
+        // so `.then()` fires when the TEE worker resolves (not immediately).
         #[allow(unused_must_use)]
         ext_outlayer::ext(self.config.outlayer_contract.clone())
             .with_static_gas(GAS_FOR_OUTLAYER_REQUEST)
             .with_attached_deposit(NearToken::from_yoctonear(self.config.verification_fee.0))
             .request_execution(
                 source,
-                near_sdk::serde_json::json!({}),
-                input_data,
-                "Json".to_string(),
-                None,
+                near_sdk::serde_json::json!({
+                    "max_instructions": 1_000_000_000u64,
+                    "max_memory_mb": 128u32,
+                    "max_execution_seconds": 60u64,
+                }),
+                near_sdk::serde_json::Value::String(input_data),
+                near_sdk::serde_json::Value::Null, // secrets_ref: none (PAT is Rohit's step)
+                near_sdk::serde_json::Value::String("Json".to_string()),
+                near_sdk::serde_json::Value::Null, // payer_account_id: sender (us) pays
+                near_sdk::serde_json::Value::Null, // params: none
             )
             .then(
                 ext_self::ext(env::current_account_id())
