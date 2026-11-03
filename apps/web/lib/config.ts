@@ -1,23 +1,14 @@
 /**
  * lib/config.ts — single source of truth for contract + network wiring.
  *
- * CONTRACT_ACCOUNT is currently a PLACEHOLDER. Track A built the escrow
- * contract (unit tests 36/36) but the testnet deployment is blocked on
- * funding, so the contract account ID is TBD. After deployment, replace the
- * value below (one line) or set NEXT_PUBLIC_CONTRACT_ACCOUNT in .env.local.
- * The app detects an un-deployed contract and shows an informational banner
- * instead of crashing.
+ * Deployed: patchpay.p2deployer.testnet (testnet, 2026-11-03).
+ * Override via NEXT_PUBLIC_CONTRACT_ACCOUNT in .env.local or Vercel env.
  */
 
 export const NETWORK_ID = process.env.NEXT_PUBLIC_NETWORK_ID || "testnet";
 
 export const CONTRACT_ACCOUNT =
-  process.env.NEXT_PUBLIC_CONTRACT_ACCOUNT || "patchpay.testnet";
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-// >>> PLACEHOLDER — UPDATE AFTER DEPLOY. Contract not deployed yet (Track A
-// >>> deploy pending funding). One-line change: set to the deployed account.
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+  process.env.NEXT_PUBLIC_CONTRACT_ACCOUNT || "patchpay.p2deployer.testnet";
 export const CONTRACT_DEPLOYED = false; // flip to true after a successful deploy
 
 export const OUTLAYER_CONTRACT =
