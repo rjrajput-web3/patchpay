@@ -10,8 +10,9 @@
   600-permission file — never committed)
 - Init: `new({ "owner": "p2deployer.testnet" })`
 - Config: `outlayer_contract = "outlayer.testnet"`,
-  `verifier_wasm_hash = "bfb159945d7db097b28cf6bba938aec9ae2b09ef205c557ffd9ffee5e33ea198"`
-  (Track B build, pinned at deploy via `set_verifier_wasm_hash`; the contract's
+  `verifier_wasm_hash` = the current Track B build hash
+  (`outlayer/github-pr-verifier/github-pr-verifier.wasm.sha256`; pinned at deploy
+  via `set_verifier_wasm_hash` by `scripts/deploy-testnet.mjs`; the contract's
   compiled default is still `UNSET_TRACK_B_PENDING` until the owner sets it)
 
 ## Storage economics (§9.7, measured)
