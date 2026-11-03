@@ -63,8 +63,9 @@ async function main() {
   // --- key-save-verify order: generate + SAVE first, then verify on-chain ---
   const keyPath = join(HIDDEN, "patchpay.testnet.key.json");
   let keyPair;
+  const normalizeSk = (sk) => (sk.startsWith("ed25519:") ? sk : "ed25519:" + sk);
   if (existsSync(keyPath)) {
-    keyPair = KeyPair.fromString(JSON.parse(readFileSync(keyPath, "utf8")).secret_key);
+    keyPair = KeyPair.fromString(normalizeSk(JSON.parse(readFileSync(keyPath, "utf8")).secret_key));
     console.log(`reusing saved keypair at ${keyPath}`);
   } else {
     keyPair = KeyPair.fromRandom("ed25519");
@@ -124,15 +125,20 @@ async function main() {
   } catch { /* needs init */ }
   if (!initialized) {
     console.log(`calling new({owner: ${deployerId}})...`);
-    const initRes = await contract.new({ owner: deployerId }, "300000000000000", "0");
+    const initRes = await contract.new({ owner: deployerId }, "30000000000000", "0");
     console.log("init tx:", initRes.transaction.hash);
   }
 
-  // pin the real Track B verifier hash (owner action)
+  // pin the real Track B verifier hash (owner action — must be signed by the OWNER)
   let cfg = await contract.get_config();
   if (cfg.verifier_wasm_hash !== REAL_VERIFIER_HASH) {
-    console.log(`setting verifier_wasm_hash to the Track B build...`);
-    const hashRes = await contract.set_verifier_wasm_hash({ wasm_hash: REAL_VERIFIER_HASH }, "300000000000000", "0");
+    console.log(`setting verifier_wasm_hash to the Track B build (signed by owner ${deployerId})...`);
+    const hashRes = await deployer.functionCall({
+      contractId: SUBACCOUNT,
+      methodName: "set_verifier_wasm_hash",
+      args: { wasm_hash: REAL_VERIFIER_HASH },
+      gas: 30000000000000n,
+    });
     console.log("set_verifier_wasm_hash tx:", hashRes.transaction.hash);
     cfg = await contract.get_config();
   } else {
