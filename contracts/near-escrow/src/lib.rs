@@ -646,28 +646,32 @@ impl Contract {
     }
 
     // ---- verification callback ----
-
-    fn assert_outlayer_caller(&self) {
-        assert_eq!(
-            env::predecessor_account_id(),
-            self.config.outlayer_contract,
-            "unauthorized: verification callback must come from the outlayer contract"
-        );
-    }
+    //
+    // SECURITY MODEL (verified against the outlayer contract source):
+    // `request_execution` returns its yield promise via `env::promise_return`,
+    // so our `.then(on_verification_result)` chains onto that yield promise.
+    // This callback fires ONLY when the OutLayer worker resolves OUR execution
+    // via `resolve_execution` → `promise_yield_resume`. The predecessor of a
+    // `.then()` callback is always the account that created it (this contract),
+    // so `#[private]` + `assert_self_caller` is the correct authorization —
+    // an outlayer-predecessor check can never pass and would brick verification.
+    // Result authenticity: only outlayer.testnet can resume our yield, so the
+    // promise bytes are authentically the TEE worker's output. Nonce echo +
+    // pinned WASM version + bounty state checks are defense in depth.
 
     fn assert_self_caller(&self) {
         assert_eq!(
             env::predecessor_account_id(),
             env::current_account_id(),
-            "unauthorized: transfer callback must come from this contract"
+            "unauthorized: callback must come from this contract"
         );
     }
 
-    /// OutLayer execution callback. `#[private]` + predecessor check; parses the
+    /// OutLayer execution callback. `#[private]` + self-caller check; parses the
     /// result defensively (fail-closed: unparseable => reject, never pay).
     #[private]
     pub fn on_verification_result(&mut self, bounty_id: u64, nonce: u64) {
-        self.assert_outlayer_caller();
+        self.assert_self_caller();
         // Read the raw promise result ourselves (byte-capped against OOG) so a
         // malformed payload degrades to a rejection instead of panicking.
         let result: Result<near_sdk::serde_json::Value, PromiseError> =
@@ -1443,18 +1447,18 @@ mod tests {
     // ---- verification callback ----
 
     #[test]
-    #[should_panic(expected = "must come from the outlayer contract")]
+    #[should_panic(expected = "must come from this contract")]
     fn callback_rejects_wrong_predecessor() {
         let c = setup();
         set_context("mallory.testnet", 0, 1_000_000_000, 100);
-        c.assert_outlayer_caller();
+        c.assert_self_caller();
     }
 
     #[test]
-    fn callback_accepts_outlayer_predecessor() {
+    fn callback_accepts_self_predecessor() {
         let c = setup();
-        set_context(OUTLAYER, 0, 1_000_000_000, 100);
-        c.assert_outlayer_caller(); // must not panic
+        set_context("patchpay.testnet", 0, 1_000_000_000, 100);
+        c.assert_self_caller(); // must not panic
     }
 
     #[test]
