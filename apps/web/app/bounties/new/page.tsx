@@ -170,7 +170,7 @@ export default function CreateBounty() {
       { label: "Verification budget", value: `${formatNear(args.verify_budget)} NEAR` },
       {
         label: "Deadline",
-        value: new Date(args.deadline / 1_000_000).toLocaleString("en-GB"),
+        value: new Date(args.deadline / 1_000_000).toLocaleString("en-GB", { timeZoneName: "short" }),
       },
       { label: "Signing as", value: accountId ?? "—", mono: true },
       { label: "Contract", value: CONTRACT_ACCOUNT, mono: true },
@@ -179,7 +179,7 @@ export default function CreateBounty() {
   })();
 
   return (
-    <Section eyebrow="New bounty" title="Put the work — and the money — on record.">
+    <Section eyebrow="New bounty" title="Put the work — and the escrow — on record.">
       {notDeployed ? (
         <EmptyState
           title="Bounty creation unlocks after the contract deploys"

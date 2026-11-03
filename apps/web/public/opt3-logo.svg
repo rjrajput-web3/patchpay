@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 64">
+  <g transform="translate(2,2) scale(0.9375)">  <path d="M32 5 L53 13.5 V31 C53 43.5 43.5 51.5 32 57 C20.5 51.5 11 43.5 11 31 V13.5 Z" fill="#16130E"/>
+  <path d="M23.5 31.5 L29.5 37.5 L41.5 23.5" fill="none" stroke="#D9541E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <text x="72" y="42" font-family="Georgia, 'Times New Roman', serif" font-size="29" font-weight="bold" letter-spacing="1.5" fill="#16130E">PATCHPAY</text>
+</svg>

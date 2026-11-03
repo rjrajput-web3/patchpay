@@ -200,7 +200,7 @@ export default function Dashboard() {
                     {shortenHash(t.hash)} ↗
                   </a>
                   <span className="ml-auto text-xs text-faint">
-                    {new Date(t.ts).toLocaleString("en-GB")}
+                    {new Date(t.ts).toLocaleString("en-GB", { timeZoneName: "short" })}
                   </span>
                 </li>
               ))}

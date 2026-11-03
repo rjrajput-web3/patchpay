@@ -72,7 +72,7 @@ export default function Marketplace() {
   }, [bounties, query, filter, sort]);
 
   return (
-    <Section eyebrow="Marketplace" title="Bounties with real money behind them.">
+    <Section eyebrow="Marketplace" title="Bounties with locked escrow behind them.">
       {notDeployed ? (
         <EmptyState
           title="Contract not deployed yet"
@@ -134,7 +134,7 @@ export default function Marketplace() {
 
           {visible === null ? (
             <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {[0, 1, 2, 3, 4, 5].map((i) => (
+              {[0, 1, 2].map((i) => (
                 <div key={i} className="h-64 animate-pulse rounded-2xl bg-paperdeep" />
               ))}
             </div>

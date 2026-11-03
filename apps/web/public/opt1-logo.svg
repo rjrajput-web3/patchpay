@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 64">
+  <g transform="translate(2,2) scale(0.9375)">  <circle cx="32" cy="32" r="29" fill="#D9541E"/>
+  <circle cx="32" cy="32" r="23.5" fill="none" stroke="#16130E" stroke-width="2.5" opacity="0.55"/>
+  <text x="32" y="43" text-anchor="middle" font-family="Georgia, serif" font-size="32" font-weight="bold" fill="#16130E">P</text></g>
+  <text x="72" y="42" font-family="Georgia, 'Times New Roman', serif" font-size="29" font-weight="bold" letter-spacing="1.5" fill="#16130E">PATCHPAY</text>
+</svg>

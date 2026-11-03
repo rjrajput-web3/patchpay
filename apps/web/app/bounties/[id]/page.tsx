@@ -11,6 +11,7 @@ import {
   EmptyState,
   StatCard,
   TxProgress,
+  ContractLoading,
   type ReviewRow,
 } from "../../../components/ui";
 import { useWallet } from "../../../components/Wallet";
@@ -256,8 +257,8 @@ export default function BountyDetail() {
   }
   if (!bounty) {
     return (
-      <Section eyebrow={`Bounty #${id}`} title="Loading…">
-        <div className="h-96 animate-pulse rounded-2xl bg-paperdeep" />
+      <Section eyebrow={`Bounty #${id}`} title="Loading bounty">
+        <ContractLoading what="this bounty" />
       </Section>
     );
   }
@@ -353,7 +354,14 @@ export default function BountyDetail() {
                       {s.state === "done" ? "✓" : s.state === "failed" ? "!" : "·"}
                     </span>
                     <div>
-                      <p className="font-mono text-sm font-bold text-ink">{s.code}</p>
+                      <p className="flex items-center gap-2 font-mono text-sm font-bold text-ink">
+                        {s.code}
+                        {s.state === "active" && (
+                          <span className="rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+                            current
+                          </span>
+                        )}
+                      </p>
                       <p className="text-xs text-muted">
                         {s.code === "VerificationPassed" && "Verifier said yes. Payout queued — not paid yet."}
                         {s.code === "PayoutPending" && "Reward transfer in flight, awaiting transfer-result callback."}
@@ -453,15 +461,15 @@ export default function BountyDetail() {
             <div className="mt-5 space-y-2 border-t border-paper/15 pt-5 text-sm">
               <div className="flex justify-between">
                 <span className="text-paper/60">Verification budget</span>
-                <span className="font-mono">{formatNear(bounty.verify_budget)}</span>
+                <span className="font-mono">{formatNear(bounty.verify_budget)} <span className="text-paper/40">NEAR</span></span>
               </div>
               <div className="flex justify-between">
                 <span className="text-paper/60">Budget spent</span>
-                <span className="font-mono">{formatNear(bounty.verify_spent)}</span>
+                <span className="font-mono">{formatNear(bounty.verify_spent)} <span className="text-paper/40">NEAR</span></span>
               </div>
               <div className="flex justify-between">
                 <span className="text-paper/60">Budget left</span>
-                <span className="font-mono text-accent">{formatNear(budgetLeft.toString())}</span>
+                <span className="font-mono text-accent">{formatNear(budgetLeft.toString())} <span className="text-paper/40">NEAR</span></span>
               </div>
               <div className="flex justify-between">
                 <span className="text-paper/60">Attempts used</span>

@@ -181,13 +181,13 @@ export default function SubmitPr() {
     <Section eyebrow={`Bounty #${id}`} title="Submit your pull request.">
       {notDeployed || notFound || !bounty ? (
         <EmptyState
-          title={notDeployed ? "Contract not deployed yet" : notFound ? "Bounty not found" : "Loading…"}
+          title={notDeployed ? "Contract not deployed yet" : notFound ? "Bounty not found" : "Loading bounty"}
           body={
             notDeployed
               ? "Submissions open after the escrow contract deploys."
               : notFound
               ? "Check the marketplace for live bounties."
-              : "Fetching bounty data from the contract."
+              : "Fetching bounty data from the NEAR testnet contract — testnet RPC can take up to a minute. Nothing is broken; the form appears automatically."
           }
         />
       ) : tracked ? (

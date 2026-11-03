@@ -8,6 +8,27 @@ import { formatNear, formatDeadline, deadlinePassed } from "../lib/near";
 import type { Bounty, BountyStatus } from "../lib/types";
 
 // ---------------------------------------------------------------------------
+// Contract loading state — honest progress while testnet RPC responds.
+// ---------------------------------------------------------------------------
+
+export function ContractLoading({ what = "data" }: { what?: string }) {
+  return (
+    <div
+      className="flex min-h-[24rem] flex-col items-center justify-center gap-4 rounded-2xl border border-line bg-white/60 p-10 text-center"
+      role="status"
+      aria-live="polite"
+    >
+      <span className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-line border-t-accent animate-spin" aria-hidden="true" />
+      <p className="font-medium text-ink">Reading {what} from the NEAR testnet contract…</p>
+      <p className="max-w-sm text-sm text-muted">
+        Testnet RPC can take up to a minute. Nothing is broken — the data
+        appears automatically once the contract responds.
+      </p>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Banners
 // ---------------------------------------------------------------------------
 

@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { Section, EmptyState } from "../../../../components/ui";
+import { Section, EmptyState, ContractLoading } from "../../../../components/ui";
 import {
   nearApi,
   ContractNotDeployedError,
@@ -104,7 +104,7 @@ export default function ProofCenter() {
       ) : error ? (
         <EmptyState title="Could not load proof" body={error} />
       ) : !bounty || !submission ? (
-        <div className="h-96 animate-pulse rounded-2xl bg-paperdeep" />
+        <ContractLoading what="this proof" />
       ) : (
         <div className="grid gap-8 lg:grid-cols-2">
           {/* -------------------------------- on-chain record */}
