@@ -31,10 +31,9 @@
 //! - TESTNET ONLY unless the owner explicitly approves a mainnet deployment.
 
 use near_sdk::json_types::U128;
-use near_sdk::store::{LookupMap, UnorderedMap};
+use near_sdk::store::{IterableMap, LookupMap};
 use near_sdk::{
     env, near, AccountId, Gas, NearToken, PanicOnDefault, Promise, PromiseError,
-    PromiseResult,
 };
 
 /// Placeholder until Track B builds + deploys the real verifier WASM and the
@@ -48,6 +47,8 @@ pub const STORAGE_PRICE_YOCTO_PER_BYTE: u128 = 10_000_000_000_000_000_000;
 
 const GAS_FOR_OUTLAYER_REQUEST: Gas = Gas::from_tgas(60);
 const GAS_FOR_CALLBACK: Gas = Gas::from_tgas(60);
+/// Cap on the OutLayer callback payload we will read (OOG safety).
+const MAX_VERIFICATION_RESULT_BYTES: usize = 1_048_576;
 const LIST_LIMIT_MAX: u64 = 100;
 
 // ---------------------------------------------------------------------------
@@ -205,10 +206,10 @@ pub struct CreateBountyArgs {
 pub struct Contract {
     owner: AccountId,
     config: Config,
-    bounties: UnorderedMap<u64, Bounty>,
+    bounties: IterableMap<u64, Bounty>,
     /// key: (bounty_id, nonce)
     submissions: LookupMap<(u64, u64), Submission>,
-    transfers: UnorderedMap<u64, PendingTransfer>,
+    transfers: IterableMap<u64, PendingTransfer>,
     next_bounty_id: u64,
     next_transfer_id: u64,
 }
@@ -331,16 +332,6 @@ fn valid_repo(repo: &str) -> bool {
     }
 }
 
-fn is_terminal(status: &BountyStatus) -> bool {
-    matches!(
-        status,
-        BountyStatus::PayoutSucceeded
-            | BountyStatus::Cancelled
-            | BountyStatus::Refunded
-            | BountyStatus::Expired
-    )
-}
-
 // ---------------------------------------------------------------------------
 // Contract implementation
 // ---------------------------------------------------------------------------
@@ -365,9 +356,9 @@ impl Contract {
                 max_title_len: 120,
                 max_description_len: 1000,
             },
-            bounties: UnorderedMap::new(b"b"),
+            bounties: IterableMap::new(b"b"),
             submissions: LookupMap::new(b"s"),
-            transfers: UnorderedMap::new(b"t"),
+            transfers: IterableMap::new(b"t"),
             next_bounty_id: 0,
             next_transfer_id: 0,
         }
@@ -631,6 +622,10 @@ impl Contract {
             }),
         );
 
+        // NOTE: the promise is intentionally detached — near-sdk creates the
+        // receipts in `Drop::drop`, so this is fire-and-forget by design; the
+        // callback carries the result back into the contract.
+        #[allow(unused_must_use)]
         ext_outlayer::ext(self.config.outlayer_contract.clone())
             .with_static_gas(GAS_FOR_OUTLAYER_REQUEST)
             .with_attached_deposit(NearToken::from_yoctonear(self.config.verification_fee.0))
@@ -673,15 +668,15 @@ impl Contract {
     #[private]
     pub fn on_verification_result(&mut self, bounty_id: u64, nonce: u64) {
         self.assert_outlayer_caller();
-        // Read the raw promise result ourselves so a malformed payload degrades
-        // to a rejection instead of panicking the callback.
+        // Read the raw promise result ourselves (byte-capped against OOG) so a
+        // malformed payload degrades to a rejection instead of panicking.
         let result: Result<near_sdk::serde_json::Value, PromiseError> =
-            match env::promise_result(0) {
-                PromiseResult::Successful(bytes) => {
+            match env::promise_result_checked(0, MAX_VERIFICATION_RESULT_BYTES) {
+                Ok(bytes) => {
                     near_sdk::serde_json::from_slice::<near_sdk::serde_json::Value>(&bytes)
                         .map_err(|_| PromiseError::Failed)
                 }
-                _ => Err(PromiseError::Failed),
+                Err(_) => Err(PromiseError::Failed),
             };
         self.handle_verification_outcome(bounty_id, nonce, result);
     }
@@ -861,6 +856,9 @@ impl Contract {
         pt.status = TransferStatus::InFlight;
         self.transfers.insert(transfer_id, pt.clone());
 
+        // NOTE: intentionally detached — near-sdk creates the receipts in
+        // `Drop::drop`; the transfer-result callback reports back.
+        #[allow(unused_must_use)]
         Promise::new(pt.to.clone())
             .transfer(NearToken::from_yoctonear(pt.amount.0))
             .then(
@@ -874,9 +872,9 @@ impl Contract {
     #[private]
     pub fn on_transfer_result(&mut self, transfer_id: u64) {
         self.assert_self_caller();
-        let result: Result<(), PromiseError> = match env::promise_result(0) {
-            PromiseResult::Successful(_) => Ok(()),
-            _ => Err(PromiseError::Failed),
+        let result: Result<(), PromiseError> = match env::promise_result_checked(0, 1024) {
+            Ok(_) => Ok(()),
+            Err(_) => Err(PromiseError::Failed),
         };
         self.handle_transfer_result(transfer_id, result);
     }
