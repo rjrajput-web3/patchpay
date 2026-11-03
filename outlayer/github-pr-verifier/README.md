@@ -132,7 +132,12 @@ Other `request_execution` args for Track A: `resource_limits`
 `{max_instructions: 1000000000, max_memory_mb: 128, max_execution_seconds: 60}`
 (or the tight variant), `input_data` = the stdin JSON string,
 `response_format: "Json"`, `secrets_ref` → the `GITHUB_TOKEN` profile
-bound to `WasmHash { hash: <above> }`.
+bound to `WasmHash { hash: <above> }`. The secrets reference shape is
+`{profile: "<name>", account_id: "<secret-owner>"}` (profile name:
+1–64 chars, letters/digits/`-`/`_`). The contract's secret-owner account
+stores the profile via `store_secrets` with accessor
+`WasmHash { hash: <pinned wasm sha256> }` — only this exact binary can
+decrypt `GITHUB_TOKEN`.
 
 **Blocked on Rohit:** `outlayer login testnet` needs his testnet account
 key; the GitHub PAT is his step (SECRETS.md). Nothing here needs them
