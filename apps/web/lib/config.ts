@@ -9,7 +9,7 @@ export const NETWORK_ID = process.env.NEXT_PUBLIC_NETWORK_ID || "testnet";
 
 export const CONTRACT_ACCOUNT =
   process.env.NEXT_PUBLIC_CONTRACT_ACCOUNT || "patchpay.p2deployer.testnet";
-export const CONTRACT_DEPLOYED = false; // flip to true after a successful deploy
+export const CONTRACT_DEPLOYED = true; // contract live on testnet since 2026-11-03
 
 export const OUTLAYER_CONTRACT =
   NETWORK_ID === "mainnet" ? "outlayer.near" : "outlayer.testnet";
