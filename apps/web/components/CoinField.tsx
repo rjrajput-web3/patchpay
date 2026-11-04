@@ -175,7 +175,7 @@ export function CoinField() {
       // desktop: large hero coin right-of-center; small coins tucked into
       // the empty top-left and bottom-right corners, clear of all copy
       addCoin(2.35, 3.4, 0.15, -1.6, 0.0032, 0.2, 0.5, 0);
-      addCoin(0.85, -6.6, 3.3, -5.5, 0.002, 0.2, 0.38, 1.4);
+      addCoin(0.85, -8.8, 3.4, -5.5, 0.002, 0.2, 0.38, 1.4);
       addCoin(0.68, 6.9, -2.9, -5.0, 0.0015, 0.24, 0.3, 2.8);
     }
 
