@@ -14,35 +14,54 @@ const NAV = [
 export function Header() {
   const pathname = usePathname();
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-paper/90 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
-        <Link href="/" className="flex items-center gap-2.5" aria-label="PATCHPAY home">
-          <img src="/logo.svg" alt="PATCHPAY" className="h-9 w-auto" />
-        </Link>
-        <nav className="hidden items-center gap-7 md:flex" aria-label="Primary">
-          {NAV.map((n) => (
-            <Link
-              key={n.href}
-              href={n.href}
-              className={`text-sm font-medium transition hover:text-accentdeep ${
-                pathname === n.href || pathname.startsWith(n.href + "/")
-                  ? "text-ink"
-                  : "text-muted"
-              }`}
+    <header className="sticky top-0 z-50 px-3 pt-3 md:px-5">
+      <div className="mx-auto max-w-6xl rounded-full bg-gradient-to-r from-[#35D6FF] via-[#3b4a8f] to-[#7865FF] p-[1.5px] shadow-[0_0_36px_rgba(53,214,255,0.22)]">
+        <div className="flex h-16 items-center justify-between rounded-full bg-[#0B1020]/95 px-4 backdrop-blur md:px-6">
+          <Link href="/" className="flex shrink-0 items-center" aria-label="PATCHPAY home">
+            <img src="/logo.svg" alt="PATCHPAY" className="h-9 w-auto" />
+          </Link>
+          <nav className="hidden items-center gap-7 md:flex" aria-label="Primary">
+            {NAV.map((n) => {
+              const active = pathname === n.href || pathname.startsWith(n.href + "/");
+              return (
+                <Link
+                  key={n.href}
+                  href={n.href}
+                  className={`relative text-sm font-medium transition hover:text-white ${
+                    active ? "text-[#35D6FF]" : "text-white/65"
+                  }`}
+                >
+                  {n.label}
+                  {active && (
+                    <span className="absolute -bottom-[21px] left-0 right-0 h-[2.5px] rounded-full bg-[#35D6FF] shadow-[0_0_12px_rgba(53,214,255,0.9)]" />
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
+          <div className="flex shrink-0 items-center gap-3">
+            <a
+              href="https://github.com/rjrajput-web3/patchpay"
+              target="_blank"
+              rel="noreferrer"
+              className="hidden items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white/75 transition hover:border-white/40 hover:text-white lg:flex"
             >
-              {n.label}
-            </Link>
-          ))}
-        </nav>
-        <ConnectButton compact />
+              <svg viewBox="0 0 16 16" className="h-4 w-4 fill-current" aria-hidden="true">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
+              </svg>
+              GitHub
+            </a>
+            <ConnectButton dark />
+          </div>
+        </div>
       </div>
-      <nav className="flex gap-6 overflow-x-auto border-t border-line/60 px-5 py-2 md:hidden" aria-label="Mobile">
+      <nav className="mx-auto mt-2 flex max-w-6xl gap-6 overflow-x-auto rounded-full bg-[#0B1020]/90 px-6 py-2.5 backdrop-blur md:hidden" aria-label="Mobile">
         {NAV.map((n) => (
           <Link
             key={n.href}
             href={n.href}
             className={`whitespace-nowrap text-sm font-medium ${
-              pathname === n.href ? "text-ink" : "text-muted"
+              pathname === n.href ? "text-[#35D6FF]" : "text-white/65"
             }`}
           >
             {n.label}
@@ -60,7 +79,7 @@ export function Footer() {
         <div className="md:col-span-2">
           <p className="flex items-center gap-3 font-display text-2xl">
             <img src="/logo-icon.svg" alt="PATCHPAY logo" className="h-8 w-8" />
-            <span>PATCH<span className="text-accent">PAY</span></span>
+            <span>PATCH<span className="bg-gradient-to-r from-[#35D6FF] to-[#7865FF] bg-clip-text text-transparent">PAY</span></span>
           </p>
           <p className="mt-2 max-w-sm text-sm leading-relaxed text-paper/60">
             Code ships. Payment follows. GitHub bounties held in NEAR escrow,

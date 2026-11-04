@@ -336,7 +336,7 @@ function WalletModal() {
 // Header connect button + account chip
 // ---------------------------------------------------------------------------
 
-export function ConnectButton({ compact = false }: { compact?: boolean }) {
+export function ConnectButton({ compact = false, dark = false }: { compact?: boolean; dark?: boolean }) {
   const { accountId, balance, setWalletModalOpen, signOut } = useWallet();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -345,9 +345,11 @@ export function ConnectButton({ compact = false }: { compact?: boolean }) {
       <button
         onClick={() => setWalletModalOpen(true)}
         className={
-          compact
-            ? "rounded-full bg-ink px-4 py-2 text-sm font-semibold text-paper transition hover:bg-charcoal"
-            : "rounded-full bg-ink px-6 py-3 text-sm font-semibold text-paper transition hover:bg-charcoal hover:shadow-card"
+          dark
+            ? "rounded-full bg-gradient-to-r from-[#35D6FF] to-[#7865FF] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_0_24px_rgba(53,214,255,0.35)] transition hover:brightness-110"
+            : compact
+              ? "rounded-full bg-ink px-4 py-2 text-sm font-semibold text-paper transition hover:bg-charcoal"
+              : "rounded-full bg-ink px-6 py-3 text-sm font-semibold text-paper transition hover:bg-charcoal hover:shadow-card"
         }
       >
         Connect wallet
@@ -359,18 +361,22 @@ export function ConnectButton({ compact = false }: { compact?: boolean }) {
     <div className="relative">
       <button
         onClick={() => setMenuOpen((v) => !v)}
-        className="flex items-center gap-2.5 rounded-full border border-line bg-white/70 py-1.5 pl-1.5 pr-4 shadow-card transition hover:shadow-lift"
+        className={
+          dark
+            ? "flex items-center gap-2.5 rounded-full border border-white/15 bg-white/10 py-1.5 pl-1.5 pr-4 transition hover:border-[#35D6FF]/50"
+            : "flex items-center gap-2.5 rounded-full border border-line bg-white/70 py-1.5 pl-1.5 pr-4 shadow-card transition hover:shadow-lift"
+        }
         aria-haspopup="menu"
         aria-expanded={menuOpen}
       >
-        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent font-mono text-xs font-bold text-white">
+        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-r from-[#35D6FF] to-[#7865FF] font-mono text-xs font-bold text-white">
           {accountId.slice(0, 1).toUpperCase()}
         </span>
         <span className="text-left leading-tight">
-          <span className="block max-w-[140px] truncate font-mono text-xs font-semibold text-ink">
+          <span className={`block max-w-[140px] truncate font-mono text-xs font-semibold ${dark ? "text-white" : "text-ink"}`}>
             {accountId}
           </span>
-          <span className="block text-[11px] text-faint">
+          <span className={`block text-[11px] ${dark ? "text-white/50" : "text-faint"}`}>
             {balance !== null ? `${formatNear(balance)} NEAR` : "…"}
             {" · "}
             {NETWORK_ID}

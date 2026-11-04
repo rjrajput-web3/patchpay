@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { CoinField } from "../components/CoinField";
 import { Section } from "../components/ui";
 import { BountyCard, EmptyState, StatusBadge } from "../components/ui";
 import { nearApi, ContractNotDeployedError } from "../lib/near";
@@ -141,18 +142,25 @@ export default function Landing() {
 
   return (
     <>
-      {/* ------------------------------------------------ HERO */}
-      <section className="relative overflow-hidden border-b border-line">
-        <div className="mx-auto max-w-6xl px-5 pb-20 pt-20 md:pb-28 md:pt-28">
-          <p className="rise font-mono text-xs font-semibold uppercase tracking-[0.25em] text-accent">
+      {/* ------------------------------------------------ HERO — immersive 3D */}
+      <section className="relative overflow-hidden bg-[#0B1020]">
+        <CoinField />
+        {/* vignette + bottom fade into the light page */}
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(11,16,32,0.55)_100%)]" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-b from-transparent to-[#0B1020]" />
+        <div className="relative z-10 mx-auto max-w-6xl px-5 pb-24 pt-20 md:pb-32 md:pt-28">
+          <p className="rise font-mono text-xs font-semibold uppercase tracking-[0.25em] text-[#35D6FF]">
             GitHub bounty escrow · NEAR testnet
           </p>
-          <h1 className="rise rise-1 mt-5 max-w-4xl font-display text-5xl leading-[1.04] tracking-tight text-ink md:text-7xl">
+          <h1 className="rise rise-1 mt-5 max-w-4xl font-display text-5xl leading-[1.04] tracking-tight text-white md:text-7xl">
             Code ships.
             <br />
-            Payment <em className="not-italic text-accent">follows.</em>
+            Payment{" "}
+            <em className="bg-gradient-to-r from-[#35D6FF] to-[#7865FF] bg-clip-text not-italic text-transparent">
+              follows.
+            </em>
           </h1>
-          <p className="rise rise-2 mt-6 max-w-2xl text-lg leading-relaxed text-muted">
+          <p className="rise rise-2 mt-6 max-w-2xl text-lg leading-relaxed text-white/70">
             PATCHPAY locks NEAR in an on-chain escrow and releases it only when a
             Trusted Execution Environment verifies that the right pull request was
             actually merged. No chasing invoices. No “the check is in the mail.”
@@ -160,26 +168,26 @@ export default function Landing() {
           <div className="rise rise-3 mt-9 flex flex-wrap gap-4">
             <Link
               href="/bounties"
-              className="rounded-full bg-ink px-8 py-4 text-sm font-semibold text-paper transition hover:bg-charcoal hover:shadow-lift"
+              className="rounded-full bg-white px-8 py-4 text-sm font-semibold text-[#0B1020] transition hover:shadow-[0_0_36px_rgba(53,214,255,0.45)]"
             >
               Browse bounties
             </Link>
             <Link
               href="/bounties/new"
-              className="rounded-full border border-ink/25 px-8 py-4 text-sm font-semibold text-ink transition hover:border-accent hover:text-accentdeep"
+              className="rounded-full border border-white/25 px-8 py-4 text-sm font-semibold text-white transition hover:border-[#35D6FF] hover:text-[#35D6FF]"
             >
               Create a bounty
             </Link>
           </div>
-          <div className="rise rise-4 mt-12 grid grid-cols-3 gap-6 border-t border-line pt-8 md:max-w-2xl">
+          <div className="rise rise-4 mt-12 grid grid-cols-3 gap-6 border-t border-white/10 pt-8 md:max-w-2xl">
             {[
               ["On-chain escrow", "Funds locked by contract"],
               ["TEE-verified merges", "Intel TDX attestation"],
               ["One-time payout", "No double-spend, ever"],
             ].map(([t, s]) => (
               <div key={t}>
-                <p className="text-sm font-semibold text-ink">{t}</p>
-                <p className="mt-1 text-xs text-faint">{s}</p>
+                <p className="text-sm font-semibold text-white">{t}</p>
+                <p className="mt-1 text-xs text-white/50">{s}</p>
               </div>
             ))}
           </div>
