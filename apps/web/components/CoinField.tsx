@@ -149,6 +149,10 @@ export function CoinField() {
       bobAmp: number;
       bobSpeed: number;
       phase: number;
+      /** edge anchor: recompute x from viewport on resize ("left" | "right" | null) */
+      anchor: "left" | "right" | null;
+      anchorZ: number;
+      anchorMargin: number;
     }
     const coins: CoinSpec[] = [];
     const addCoin = (
@@ -159,12 +163,21 @@ export function CoinField() {
       spin: number,
       bobAmp: number,
       bobSpeed: number,
-      phase: number
+      phase: number,
+      anchor: "left" | "right" | null = null,
+      anchorMargin = 0
     ) => {
       const mesh = makeCoin(radius, faceTex);
       mesh.position.set(x, y, z);
       scene.add(mesh);
-      coins.push({ mesh, baseY: y, spin, bobAmp, bobSpeed, phase });
+      coins.push({ mesh, baseY: y, spin, bobAmp, bobSpeed, phase, anchor, anchorZ: z, anchorMargin });
+    };
+
+    // Depth coins are anchored to the viewport edges at runtime, so they
+    // stay clear of the centered text column at ANY screen width.
+    const halfWAt = (z: number) => {
+      const dist = camera.position.z - z;
+      return Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * dist * camera.aspect;
     };
 
     if (isMobile) {
@@ -175,8 +188,8 @@ export function CoinField() {
       // desktop: large hero coin right-of-center; small coins tucked into
       // the empty top-left and bottom-right corners, clear of all copy
       addCoin(2.35, 3.4, 0.15, -1.6, 0.0032, 0.2, 0.5, 0);
-      addCoin(0.85, -8.8, 3.4, -5.5, 0.002, 0.2, 0.38, 1.4);
-      addCoin(0.68, 6.9, -2.9, -5.0, 0.0015, 0.24, 0.3, 2.8);
+      addCoin(0.85, -halfWAt(-5.5) + 1.1, 3.4, -5.5, 0.002, 0.2, 0.38, 1.4, "left", 1.1);
+      addCoin(0.68, halfWAt(-5.0) - 1.0, -2.9, -5.0, 0.0015, 0.24, 0.3, 2.8, "right", 1.0);
     }
 
     // parallax targets (mouse on desktop, touch on mobile)
@@ -263,6 +276,11 @@ export function CoinField() {
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
+      // keep edge-anchored coins glued to the viewport corners
+      for (const c of coins) {
+        if (c.anchor === "left") c.mesh.position.x = -halfWAt(c.anchorZ) + c.anchorMargin;
+        else if (c.anchor === "right") c.mesh.position.x = halfWAt(c.anchorZ) - c.anchorMargin;
+      }
     };
     window.addEventListener("resize", onResize);
 
