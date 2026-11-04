@@ -346,7 +346,7 @@ export function ConnectButton({ compact = false, dark = false }: { compact?: boo
         onClick={() => setWalletModalOpen(true)}
         className={
           dark
-            ? "rounded-full bg-gradient-to-r from-[#35D6FF] to-[#7865FF] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_0_24px_rgba(53,214,255,0.35)] transition hover:brightness-110"
+            ? "rounded-full bg-gradient-to-r from-[#35D6FF] to-[#7865FF] px-4 py-2 text-xs font-semibold text-white shadow-[0_0_24px_rgba(53,214,255,0.35)] transition hover:brightness-110 sm:px-5 sm:py-2.5 sm:text-sm"
             : compact
               ? "rounded-full bg-ink px-4 py-2 text-sm font-semibold text-paper transition hover:bg-charcoal"
               : "rounded-full bg-ink px-6 py-3 text-sm font-semibold text-paper transition hover:bg-charcoal hover:shadow-card"

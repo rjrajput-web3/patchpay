@@ -18,12 +18,12 @@ const STEPS = [
   {
     n: "02",
     title: "Ship the pull request",
-    body: "A developer does the work and opens a PR. The PR body carries one claim line — Claim: <their-near-account> — cryptographically binding the PR to the wallet that submitted it.",
+    body: "A developer does the work and opens a PR. The PR body carries one claim line — Claim: <their-near-account> — declaring which NEAR account should receive the payout. That line is plain text, not proof: the contract and the verifier independently check that the claim exactly equals the account that submitted the PR, and payout always goes to the submitter's own transaction — never to an address read from PR text.",
   },
   {
     n: "03",
     title: "The merge triggers payment",
-    body: "OutLayer's TEE workers verify the actual merge against the bounty's conditions and produce an Intel TDX attestation. The contract validates the result and releases the reward — to the submitter, and only the submitter.",
+    body: "OutLayer's TEE workers verify the actual merge against the bounty's conditions and produce an Intel TDX attestation. The contract validates the result and releases the reward through its payout state machine — to the submitter, and only the submitter. Live on NEAR testnet today; the full TEE-to-contract callback loop is proven in tests, with async callbacks a known testnet limitation.",
   },
 ];
 
@@ -145,14 +145,17 @@ export default function Landing() {
       {/* ------------------------------------------------ HERO — immersive 3D */}
       <section className="relative overflow-hidden bg-[#0B1020]">
         <CoinField />
-        {/* vignette + bottom fade into the light page */}
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(11,16,32,0.55)_100%)]" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-b from-transparent to-[#0B1020]" />
-        <div className="relative z-10 mx-auto max-w-6xl px-5 pb-24 pt-20 md:pb-32 md:pt-28">
-          <p className="rise font-mono text-xs font-semibold uppercase tracking-[0.25em] text-[#35D6FF]">
+        {/* ambient brand glows (CSS — deterministic, cheap) */}
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(720px_420px_at_78%_30%,rgba(53,214,255,0.13),transparent_65%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(620px_420px_at_12%_85%,rgba(120,101,255,0.12),transparent_65%)]" />
+        {/* readability: text-side scrim so the coin never fights the copy */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#0B1020]/85 via-[#0B1020]/35 to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0B1020] via-transparent to-[#0B1020]/60" />
+        <div className="relative z-10 mx-auto max-w-6xl px-5 pb-28 pt-16 sm:pt-20 md:pb-36 md:pt-28">
+          <p className="rise font-mono text-[11px] font-semibold uppercase tracking-[0.22em] text-[#35D6FF] sm:text-xs sm:tracking-[0.25em]">
             GitHub bounty escrow · NEAR testnet
           </p>
-          <h1 className="rise rise-1 mt-5 max-w-4xl font-display text-5xl leading-[1.04] tracking-tight text-white md:text-7xl">
+          <h1 className="rise rise-1 mt-5 max-w-3xl font-display text-[clamp(2rem,9vw,2.9rem)] font-bold leading-[1.06] tracking-tight text-white md:text-7xl">
             Code ships.
             <br />
             Payment{" "}
@@ -160,26 +163,27 @@ export default function Landing() {
               follows.
             </em>
           </h1>
-          <p className="rise rise-2 mt-6 max-w-2xl text-lg leading-relaxed text-white/70">
+          <p className="rise rise-2 mt-6 max-w-xl text-base leading-[1.75] text-white/70 md:text-lg md:leading-relaxed">
             PATCHPAY locks NEAR in an on-chain escrow and releases it only when a
             Trusted Execution Environment verifies that the right pull request was
-            actually merged. No chasing invoices. No “the check is in the mail.”
+            actually merged. No chasing invoices. No &ldquo;the check is in the
+            mail.&rdquo;
           </p>
-          <div className="rise rise-3 mt-9 flex flex-wrap gap-4">
+          <div className="rise rise-3 mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
             <Link
               href="/bounties"
-              className="rounded-full bg-white px-8 py-4 text-sm font-semibold text-[#0B1020] transition hover:shadow-[0_0_36px_rgba(53,214,255,0.45)]"
+              className="rounded-full bg-white px-8 py-4 text-center text-sm font-semibold text-[#0B1020] transition hover:shadow-[0_0_36px_rgba(53,214,255,0.45)]"
             >
               Browse bounties
             </Link>
             <Link
               href="/bounties/new"
-              className="rounded-full border border-white/25 px-8 py-4 text-sm font-semibold text-white transition hover:border-[#35D6FF] hover:text-[#35D6FF]"
+              className="rounded-full border border-white/25 px-8 py-4 text-center text-sm font-semibold text-white transition hover:border-[#35D6FF] hover:text-[#35D6FF]"
             >
               Create a bounty
             </Link>
           </div>
-          <div className="rise rise-4 mt-12 grid grid-cols-3 gap-6 border-t border-white/10 pt-8 md:max-w-2xl">
+          <div className="rise rise-4 mt-12 grid grid-cols-1 gap-5 border-t border-white/10 pt-8 sm:grid-cols-3 sm:gap-6 md:max-w-2xl">
             {[
               ["On-chain escrow", "Funds locked by contract"],
               ["TEE-verified merges", "Intel TDX attestation"],
@@ -229,7 +233,10 @@ export default function Landing() {
               with the verifier WASM pinned by SHA256. A worker runs the verifier
               inside Intel TDX, fetches the PR from the GitHub API, and checks
               every condition. The result comes back with an attestation binding
-              the exact code, input, and output.
+              the exact code, input, and output. The verifier is live on
+              OutLayer&apos;s testnet workers today — the full asynchronous
+              TEE-to-contract callback is proven in tests, and is a known
+              testnet limitation we document openly.
             </p>
             <p className="mt-4 text-base leading-relaxed text-muted">
               The contract then independently re-checks the binding — bounty ID,
@@ -304,7 +311,8 @@ export default function Landing() {
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-muted">
             Create a bounty in minutes. Your NEAR stays locked until the merge is
-            proven — then the developer is paid automatically.
+            proven — then the developer is paid through a payout state machine
+            that only marks &ldquo;paid&rdquo; after the transfer lands.
           </p>
           <div className="mt-9 flex flex-wrap justify-center gap-4">
             <Link

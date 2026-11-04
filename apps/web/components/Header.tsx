@@ -16,9 +16,9 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 px-3 pt-3 md:px-5">
       <div className="mx-auto max-w-6xl rounded-full bg-gradient-to-r from-[#35D6FF] via-[#3b4a8f] to-[#7865FF] p-[1.5px] shadow-[0_0_36px_rgba(53,214,255,0.22)]">
-        <div className="flex h-16 items-center justify-between rounded-full bg-[#0B1020]/95 px-4 backdrop-blur md:px-6">
-          <Link href="/" className="flex shrink-0 items-center" aria-label="PATCHPAY home">
-            <img src="/logo.svg" alt="PATCHPAY" className="h-9 w-auto" />
+        <div className="flex h-14 items-center justify-between gap-2 rounded-full bg-[#0B1020]/95 px-3 backdrop-blur sm:px-4 md:h-16 md:px-6">
+          <Link href="/" className="flex min-w-0 shrink-0 items-center" aria-label="PATCHPAY home">
+            <img src="/logo.svg" alt="PATCHPAY" className="h-7 w-auto sm:h-8 md:h-9" />
           </Link>
           <nav className="hidden items-center gap-7 md:flex" aria-label="Primary">
             {NAV.map((n) => {
@@ -39,7 +39,7 @@ export function Header() {
               );
             })}
           </nav>
-          <div className="flex shrink-0 items-center gap-3">
+          <div className="flex min-w-0 shrink-0 items-center gap-2 sm:gap-3">
             <a
               href="https://github.com/rjrajput-web3/patchpay"
               target="_blank"
@@ -55,7 +55,7 @@ export function Header() {
           </div>
         </div>
       </div>
-      <nav className="mx-auto mt-2 flex max-w-6xl gap-6 overflow-x-auto rounded-full bg-[#0B1020]/90 px-6 py-2.5 backdrop-blur md:hidden" aria-label="Mobile">
+      <nav className="mx-auto mt-2 flex max-w-6xl items-center gap-6 overflow-x-auto rounded-full bg-[#0B1020]/90 px-6 py-3 backdrop-blur md:hidden" aria-label="Mobile">
         {NAV.map((n) => (
           <Link
             key={n.href}
