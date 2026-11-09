@@ -11,6 +11,8 @@ releasing payment. **A GitHub merge becomes a verifiable payment trigger.**
 Built for the NEAR **Build Beyond Boundaries** hackathon (Nov 1–14, 2026).
 **TESTNET ONLY** during development — no mainnet, no real funds.
 
+> **My other NEAR hackathon entry:** [VAULTRY](https://github.com/rjrajput-web3/vaultguard) — guardian-scored cross-chain swaps on NEAR testnet. Independent project, separate submission.
+
 ## Repo layout
 
 ```
