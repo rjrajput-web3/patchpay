@@ -27,7 +27,11 @@
 //! - §9.8 attestation binding: nonce echo + pinned WASM version asserted.
 //! - The verifier/worker can NEVER move funds; only the contract pays out, and
 //!   only on the strict happy path.
-//! - NO admin fund-withdrawal path: the owner may only update config values.
+//! - No direct admin fund-withdrawal function — but the owner CAN update config
+//!   values, including the OutLayer contract and verifier WASM hash, with no
+//!   timelock or multisig. A compromised owner could point at an always-true
+//!   verifier and drain escrow via the normal payout path; the owner key is a
+//!   trust assumption until one-way pinning + timelock land.
 //! - TESTNET ONLY unless the owner explicitly approves a mainnet deployment.
 
 use near_sdk::json_types::U128;
@@ -566,6 +570,16 @@ impl Contract {
         assert!(
             budget_left >= self.config.verification_fee.0,
             "verify budget exhausted for this bounty"
+        );
+
+        // G3 (audit P-04): refuse verification while the verifier hash is still
+        // the UNSET placeholder. Without this, `version_ok` treats an output
+        // that omits hash fields as valid, so a bounty could be verified with
+        // no pinned verifier at all. Checked before any fee/attempt is consumed.
+        assert!(
+            !self.config.verifier_wasm_hash.is_empty()
+                && self.config.verifier_wasm_hash != UNSET_VERIFIER_HASH,
+            "verifier WASM hash is not set — owner must pin the real verifier hash via set_verifier_wasm_hash before any verification"
         );
 
         let submitter = env::predecessor_account_id();
@@ -1214,7 +1228,12 @@ mod tests {
 
     fn setup() -> Contract {
         set_context(OWNER, 0, 1_000_000_000, 100);
-        Contract::new(OWNER.parse().unwrap())
+        let mut c = Contract::new(OWNER.parse().unwrap());
+        // G3: submit_pr now refuses verification while the verifier hash is the
+        // UNSET placeholder, so pin a dummy hash here; the suite then exercises
+        // verification with the new precondition satisfied.
+        c.set_verifier_wasm_hash("test-verifier-hash".to_string());
+        c
     }
 
     fn bounty_args(reward: u128, budget: u128, deadline: u64) -> CreateBountyArgs {
